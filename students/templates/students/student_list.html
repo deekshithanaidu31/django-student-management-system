@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 30px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .add-btn {
+            background: #2563eb;
+            color: white;
+            padding: 12px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .add-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 11px 13px;
+            width: 290px;
+            max-width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            padding: 11px 18px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            padding: 11px 15px;
+            background: #64748b;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th, td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 2px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .edit-btn {
+            background: #16a34a;
+        }
+
+        .edit-btn:hover {
+            background: #15803d;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background: #b91c1c;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+
+        .result-count {
+            margin: 0 0 15px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 15px;
+            }
+
+            .toolbar {
+                align-items: stretch;
+            }
+
+            .search-form {
+                width: 100%;
+            }
+
+            .search-input {
+                flex: 1;
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Student Management System</h1>
+
+    <div class="toolbar">
+
+        <a href="{% url 'add_student' %}" class="add-btn">
+            + Add New Student
+        </a>
+
+        <form method="GET"
+              action="{% url 'student_list' %}"
+              class="search-form">
+
+            <input
+                type="text"
+                name="q"
+                class="search-input"
+                placeholder="Search name, email or course..."
+                value="{{ query }}"
+            >
+
+            <button type="submit" class="search-btn">
+                Search
+            </button>
+
+            <a href="{% url 'student_list' %}" class="reset-btn">
+                Reset
+            </a>
+
+        </form>
+    </div>
+
+    {% if query %}
+        <p class="result-count">
+            Search results for "{{ query }}"
+        </p>
+    {% endif %}
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Age</th>
+                    <th>Batch</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.id }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.course }}</td>
+                    <td>{{ student.age }}</td>
+                    <td>{{ student.batch }}</td>
+
+                    <td>
+                        <a
+                            href="{% url 'edit_student' student.id %}"
+                            class="action-btn edit-btn">
+                            Edit
+                        </a>
+
+                        <a
+                            href="{% url 'delete_student' student.id %}"
+                            class="action-btn delete-btn">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="empty-message">
+                        {% if query %}
+                            No students match your search.
+                        {% else %}
+                            No students found. Please add a student.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>
